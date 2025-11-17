@@ -39,25 +39,47 @@ export async function GET(request: NextRequest) {
     }
     
     // Ensure the response always has the correct structure - be very explicit
-    const postsArray = Array.isArray(result.posts) ? result.posts : (result.posts ? [result.posts] : []);
+    let postsArray: Post[] = [];
     
-    const responseData: any = {
-      posts: postsArray,
-      meta: result.meta || {
-        pagination: {
-          page,
-          limit,
-          pages: 1,
-          total: 0,
-          next: null,
-          prev: null,
-        },
+    if (Array.isArray(result.posts)) {
+      postsArray = result.posts;
+    } else if (result.posts) {
+      postsArray = [result.posts];
+    } else {
+      postsArray = [];
+    }
+    
+    // Force posts to always be an array, never undefined/null
+    if (!postsArray || !Array.isArray(postsArray)) {
+      console.error('[API Route] CRITICAL: postsArray is invalid!', { postsArray, type: typeof postsArray });
+      postsArray = [];
+    }
+    
+    const responseData: any = {};
+    responseData.posts = postsArray; // Set explicitly
+    responseData.meta = result.meta || {
+      pagination: {
+        page,
+        limit,
+        pages: 1,
+        total: 0,
+        next: null,
+        prev: null,
       },
     };
     
-    // Double-check posts is in the response
+    // Triple-check posts is in the response
     if (!('posts' in responseData)) {
       console.error('[API Route] CRITICAL: posts missing from responseData!', responseData);
+      responseData.posts = [];
+    }
+    
+    // Verify posts is actually an array
+    if (!Array.isArray(responseData.posts)) {
+      console.error('[API Route] CRITICAL: responseData.posts is not an array!', { 
+        type: typeof responseData.posts, 
+        value: responseData.posts 
+      });
       responseData.posts = [];
     }
     
