@@ -38,9 +38,11 @@ export async function GET(request: NextRequest) {
       console.warn('[API Route] WARNING: Empty posts array!', JSON.stringify(result, null, 2));
     }
     
-    // Ensure the response always has the correct structure
-    const responseData: any = {
-      posts: Array.isArray(result.posts) ? result.posts : [],
+    // Ensure the response always has the correct structure - be very explicit
+    const postsArray = Array.isArray(result.posts) ? result.posts : (result.posts ? [result.posts] : []);
+    
+    const responseData = {
+      posts: postsArray,
       meta: result.meta || {
         pagination: {
           page,
@@ -52,6 +54,12 @@ export async function GET(request: NextRequest) {
         },
       },
     };
+    
+    // Double-check posts is in the response
+    if (!('posts' in responseData)) {
+      console.error('[API Route] CRITICAL: posts missing from responseData!', responseData);
+      (responseData as any).posts = [];
+    }
     
     // Add debug info if posts are missing (only in development/debugging)
     if (responseData.posts.length === 0 && result.meta?.pagination?.total > 0) {
