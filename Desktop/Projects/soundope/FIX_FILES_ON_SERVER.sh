@@ -295,26 +295,13 @@ cat > /tmp/layout_fixed_nav.jsx << 'EOF'
 }
 EOF
 
-echo "=== Finding the correct section to replace ==="
-# Find where the component ends incorrectly
+echo "=== Finding good stopping point ==="
+# Find where the component ends correctly
 LAST_GOOD_LINE=$(grep -n "Footer />" src/pages/Layout.jsx | tail -1 | cut -d: -f1)
-echo "Last good line with Footer: $LAST_GOOD_LINE"
+echo "Last good line: $LAST_GOOD_LINE"
 
-# Find where the broken nav starts
-BROKEN_NAV_START=$(grep -n "Bottom Navigation" src/pages/Layout.jsx | tail -1 | cut -d: -f1)
-echo "Broken nav starts at: $BROKEN_NAV_START"
-
-# Replace everything from the broken nav to the end with the correct version
-head -n $((BROKEN_NAV_START - 1)) src/pages/Layout.jsx > /tmp/layout_start.jsx
-cat /tmp/layout_fixed_nav.jsx >> /tmp/layout_start.jsx
-mv /tmp/layout_start.jsx src/pages/Layout.jsx
-
-echo "=== Layout.jsx fixed - checking syntax ==="
-npm run build
-
-if [ $? -eq 0 ]; then
-    echo "✅ Layout.jsx build successful!"
-else
-    echo "❌ Layout.jsx still has issues"
-    exit 1
-fi
+echo "=== Truncating file at Footer and adding clean ending ==="
+# Truncate at Footer and add clean minimal ending
+head -n $LAST_GOOD_LINE src/pages/Layout.jsx > /tmp/layout_clean.jsx
+echo '        <CookieBanner /></div></>;' >> /tmp/layout_clean.jsx
+mv /tmp/layout_clean.jsx src/pages/Layout.jsx
