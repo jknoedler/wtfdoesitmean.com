@@ -1,0 +1,31 @@
+{
+  "name": "soundope-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Soundope backend API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "migrate": "node scripts/migrate.js",
+    "import": "node scripts/importUsers.js",
+    "import-tracks": "node scripts/importTracks.js",
+    "set-default-passwords": "node scripts/setDefaultPasswords.js"
+  },
+  "dependencies": {
+    "@tryghost/content-api": "^1.12.0",
+    "aws-sdk": "^2.1500.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "csv-parser": "^3.0.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
