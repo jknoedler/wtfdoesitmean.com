@@ -3,6 +3,7 @@
 :root {
   --background: #000000;
   --foreground: #E5E5E5;
+  --font-westend-ridge: var(--font-westend-ridge);
   --font-hardcore: var(--font-hardcore);
 }
 
@@ -33,6 +34,10 @@ body::before {
   opacity: 0.5;
   z-index: -1;
   pointer-events: none;
+}
+
+.font-westend {
+  font-family: var(--font-westend-ridge), serif;
 }
 
 .font-hardcore {
