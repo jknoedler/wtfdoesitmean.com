@@ -9,18 +9,20 @@ function getApi(): GhostContentAPI | null {
   
   // Only create API if we have valid credentials
   if (!url || !key || url === 'https://your-ghost-instance.com' || key === 'paste-your-api-key-here') {
+    console.log('[Ghost API] Not configured - missing URL or key');
     return null;
   }
   
   if (!api) {
     try {
+      console.log('[Ghost API] Initializing with URL:', url);
       api = new GhostContentAPI({
         url,
         key,
         version: 'v5.0',
       });
     } catch (error) {
-      console.error('Failed to initialize Ghost API:', error);
+      console.error('[Ghost API] Failed to initialize:', error);
       return null;
     }
   }
@@ -113,6 +115,7 @@ export async function getPosts(page: number = 1, limit: number = 15): Promise<{ 
     if (!ghostApi) {
       throw new Error('Ghost API not configured');
     }
+    console.log('[Ghost API] Fetching posts - page:', page, 'limit:', limit);
     const result = await ghostApi.posts.browse({
       limit,
       page,
@@ -120,6 +123,7 @@ export async function getPosts(page: number = 1, limit: number = 15): Promise<{ 
       fields: ['id', 'title', 'slug', 'html', 'excerpt', 'published_at', 'updated_at', 'meta_title', 'meta_description'],
     });
 
+    console.log('[Ghost API] Successfully fetched', result.posts.length, 'posts. Total:', result.meta.pagination.total);
     return {
       posts: result.posts as Post[],
       meta: {
@@ -134,8 +138,13 @@ export async function getPosts(page: number = 1, limit: number = 15): Promise<{ 
       },
     };
   } catch (error) {
-    console.error('Error fetching posts from Ghost:', error);
+    console.error('[Ghost API] Error fetching posts:', error);
+    if (error instanceof Error) {
+      console.error('[Ghost API] Error message:', error.message);
+      console.error('[Ghost API] Error stack:', error.stack);
+    }
     // Fallback to mock data on error
+    console.log('[Ghost API] Falling back to mock data');
     const mockPosts = getMockPosts();
     return {
       posts: mockPosts,
