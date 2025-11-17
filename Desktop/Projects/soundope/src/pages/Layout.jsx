@@ -1489,7 +1489,7 @@ export default function Layout({ children, currentPageName }) {
         {location.pathname !== createPageUrl("Login") &&
          location.pathname !== "/Login" &&
          location.pathname !== "/login" && (
-          <nav className="fixed bottom-0 left-0 right-0 h-20 neuro-base z-[500] border-t border-[#1f1f1f] bg-[#141414]/98 backdrop-blur-sm safe-area-inset-bottom" style={{ boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.8)' }}>
+          <nav className="fixed bottom-0 left-0 right-0 h-20 neuro-base z-[500] border-t border-[#1f1f1f] safe-area-inset-bottom" style={{ boxShadow: '0 -2px 8px rgba(0, 0, 0, 0.5)' }}>
             <div className="h-full max-w-screen-xl mx-auto px-2 sm:px-6 flex items-center justify-around">
               <Link
                 to={createPageUrl("Dashboard")}
