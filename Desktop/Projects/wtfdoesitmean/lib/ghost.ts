@@ -126,10 +126,26 @@ export async function getPosts(page: number = 1, limit: number = 15): Promise<{ 
       fields: ['id', 'title', 'slug', 'html', 'excerpt', 'published_at', 'updated_at', 'meta_title', 'meta_description'],
     });
 
-    console.log('[Ghost API] Raw result:', {
+    // Log the full result structure (but limit size to avoid huge logs)
+    console.log('[Ghost API] Raw result structure:', {
       resultKeys: Object.keys(result || {}),
       resultType: typeof result,
+      isArray: Array.isArray(result),
+      hasPosts: !!(result as any)?.posts,
+      postsType: typeof (result as any)?.posts,
+      postsIsArray: Array.isArray((result as any)?.posts),
+      postsLength: Array.isArray((result as any)?.posts) ? (result as any).posts.length : 'N/A',
+      hasMeta: !!(result as any)?.meta,
+      sampleKeys: Object.keys(result || {}).slice(0, 10),
     });
+
+    // Try to stringify a sample to see structure (limit size)
+    try {
+      const sample = JSON.stringify(result).substring(0, 500);
+      console.log('[Ghost API] Result sample (first 500 chars):', sample);
+    } catch (e) {
+      console.log('[Ghost API] Could not stringify result sample');
+    }
 
     // Type assertion to bypass TypeScript warnings - we know the structure is correct
     const typedResult = result as any;
@@ -139,7 +155,7 @@ export async function getPosts(page: number = 1, limit: number = 15): Promise<{ 
 
     // Check if we have a proper posts response
     if (typedResult.posts && Array.isArray(typedResult.posts)) {
-      console.log('[Ghost API] Standard response structure found');
+      console.log('[Ghost API] Standard response structure found with', typedResult.posts.length, 'posts');
       posts = typedResult.posts;
       meta = typedResult.meta;
     }
@@ -151,6 +167,17 @@ export async function getPosts(page: number = 1, limit: number = 15): Promise<{ 
       posts = keys.map(key => typedResult[key] as Post);
       meta = typedResult.meta || {};
       console.log('[Ghost API] Found', posts.length, 'posts from numbered properties');
+    }
+    // Check if result itself is an array
+    else if (Array.isArray(typedResult)) {
+      console.log('[Ghost API] Result is an array with', typedResult.length, 'items');
+      posts = typedResult as Post[];
+      meta = { pagination: { page, limit, pages: 1, total: typedResult.length, next: null, prev: null } };
+    }
+    // Check if result has a different structure
+    else {
+      console.error('[Ghost API] Unexpected response structure. Full keys:', Object.keys(typedResult));
+      console.error('[Ghost API] Result value:', JSON.stringify(typedResult).substring(0, 1000));
     }
 
     if (posts.length > 0) {
@@ -175,7 +202,10 @@ export async function getPosts(page: number = 1, limit: number = 15): Promise<{ 
     }
 
     // If no posts property found, the API call might have returned data in a different structure
-    console.error('[Ghost API] Invalid response structure - no posts property found');
+    console.error('[Ghost API] ERROR: No posts found in response!');
+    console.error('[Ghost API] Result keys:', Object.keys(typedResult || {}));
+    console.error('[Ghost API] Result type:', typeof typedResult);
+    console.error('[Ghost API] Result is array:', Array.isArray(typedResult));
     throw new Error('Invalid Ghost API response: missing posts property');
   } catch (error) {
     console.error('[Ghost API] Error fetching posts:', error);
