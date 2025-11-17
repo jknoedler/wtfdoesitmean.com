@@ -123,17 +123,35 @@ export async function getPosts(page: number = 1, limit: number = 15): Promise<{ 
       fields: ['id', 'title', 'slug', 'html', 'excerpt', 'published_at', 'updated_at', 'meta_title', 'meta_description'],
     });
 
-    console.log('[Ghost API] Successfully fetched', result.posts.length, 'posts. Total:', result.meta.pagination.total);
+    console.log('[Ghost API] Raw result:', JSON.stringify({
+      hasPosts: !!result.posts,
+      postsLength: result.posts?.length,
+      hasMeta: !!result.meta,
+      resultKeys: Object.keys(result || {}),
+    }));
+
+    if (!result || !result.posts) {
+      console.error('[Ghost API] Invalid response structure - no posts property');
+      throw new Error('Invalid Ghost API response: missing posts property');
+    }
+
+    if (!Array.isArray(result.posts)) {
+      console.error('[Ghost API] Posts is not an array:', typeof result.posts, result.posts);
+      throw new Error('Invalid Ghost API response: posts is not an array');
+    }
+
+    console.log('[Ghost API] Successfully fetched', result.posts.length, 'posts. Total:', result.meta?.pagination?.total || 0);
+    
     return {
       posts: result.posts as Post[],
       meta: {
         pagination: {
-          page: result.meta.pagination.page,
-          limit: result.meta.pagination.limit,
-          pages: result.meta.pagination.pages,
-          total: result.meta.pagination.total,
-          next: result.meta.pagination.next || null,
-          prev: result.meta.pagination.prev || null,
+          page: result.meta?.pagination?.page || page,
+          limit: result.meta?.pagination?.limit || limit,
+          pages: result.meta?.pagination?.pages || 1,
+          total: result.meta?.pagination?.total || result.posts.length,
+          next: result.meta?.pagination?.next || null,
+          prev: result.meta?.pagination?.prev || null,
         },
       },
     };
