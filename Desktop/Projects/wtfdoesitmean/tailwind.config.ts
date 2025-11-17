@@ -13,7 +13,7 @@ const config: Config = {
         foreground: "var(--foreground)",
       },
       fontFamily: {
-        westend: ["var(--font-westend-ridge)", "serif"],
+        hardcore: ["var(--font-hardcore)", "serif"],
       },
     },
   },

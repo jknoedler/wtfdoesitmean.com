@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
-const westendRidge = localFont({
-  src: "../public/fonts/WestendRidgeTexturedRough-E4Ban.ttf",
-  variable: "--font-westend-ridge",
+const hardcore = localFont({
+  src: "../public/fonts/hardcore-font.otf",
+  variable: "--font-hardcore",
   display: "swap",
 });
 
@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${westendRidge.variable} antialiased`}>
+      <body className={`${hardcore.variable} antialiased`}>
         {children}
       </body>
     </html>

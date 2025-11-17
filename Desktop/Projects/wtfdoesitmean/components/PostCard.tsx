@@ -42,7 +42,7 @@ export default function PostCard({ post }: PostCardProps) {
       className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-b border-[#E5E5E5]/10"
     >
       <header className="mb-6">
-        <h2 className="font-westend text-3xl sm:text-4xl md:text-5xl text-[#E5E5E5] mb-4 leading-tight">
+        <h2 className="font-hardcore text-3xl sm:text-4xl md:text-5xl text-[#E5E5E5] mb-4 leading-tight">
           {post.title}
         </h2>
         <div className="flex items-center gap-4 text-sm text-[#E5E5E5]/60">

@@ -3,7 +3,7 @@
 :root {
   --background: #000000;
   --foreground: #E5E5E5;
-  --font-westend-ridge: var(--font-westend-ridge);
+  --font-hardcore: var(--font-hardcore);
 }
 
 @theme inline {
@@ -35,8 +35,8 @@ body::before {
   pointer-events: none;
 }
 
-.font-westend {
-  font-family: var(--font-westend-ridge), serif;
+.font-hardcore {
+  font-family: var(--font-hardcore), serif;
 }
 
 /* Prose styles for post content */
