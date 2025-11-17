@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     // Ensure the response always has the correct structure - be very explicit
     const postsArray = Array.isArray(result.posts) ? result.posts : (result.posts ? [result.posts] : []);
     
-    const responseData = {
+    const responseData: any = {
       posts: postsArray,
       meta: result.meta || {
         pagination: {
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
     // Double-check posts is in the response
     if (!('posts' in responseData)) {
       console.error('[API Route] CRITICAL: posts missing from responseData!', responseData);
-      (responseData as any).posts = [];
+      responseData.posts = [];
     }
     
     // Add debug info if posts are missing (only in development/debugging)
