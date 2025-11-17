@@ -48,6 +48,7 @@ export default function Home() {
 
   const fetchPosts = useCallback(async (pageNum: number) => {
     try {
+      console.log('[Frontend] Starting fetch for page:', pageNum);
       setIsLoadingMore(true);
       const response = await fetch(`/api/posts?page=${pageNum}&limit=15`, {
         cache: 'no-store',
@@ -55,21 +56,43 @@ export default function Home() {
           'Cache-Control': 'no-cache',
         },
       });
+      
+      console.log('[Frontend] Response status:', response.status, response.ok);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       
       console.log('[Frontend] Fetched posts:', {
         postsCount: data.posts?.length || 0,
         total: data.meta?.pagination?.total || 0,
-        posts: data.posts,
+        hasPosts: !!data.posts,
+        postsArray: data.posts,
+        fullData: data,
       });
       
       if (data.posts && data.posts.length > 0) {
-        setPosts((prev) => [...prev, ...data.posts]);
-        setFilteredPosts((prev) => [...prev, ...data.posts]);
+        console.log('[Frontend] Setting posts, count:', data.posts.length);
+        setPosts((prev) => {
+          const newPosts = [...prev, ...data.posts];
+          console.log('[Frontend] Total posts after set:', newPosts.length);
+          return newPosts;
+        });
+        setFilteredPosts((prev) => {
+          const newFiltered = [...prev, ...data.posts];
+          console.log('[Frontend] Total filtered posts after set:', newFiltered.length);
+          return newFiltered;
+        });
         setHasMore(data.meta.pagination.next !== null);
         setPage(pageNum);
       } else {
-        console.log('[Frontend] No posts in response or empty array');
+        console.log('[Frontend] No posts in response or empty array', {
+          hasPosts: !!data.posts,
+          postsLength: data.posts?.length,
+          dataKeys: Object.keys(data),
+        });
         setHasMore(false);
       }
     } catch (error) {
@@ -78,6 +101,7 @@ export default function Home() {
     } finally {
       setIsLoadingMore(false);
       setLoading(false);
+      console.log('[Frontend] Fetch complete, loading set to false');
     }
   }, []);
 
@@ -146,6 +170,8 @@ export default function Home() {
     );
   }
 
+  console.log('[Frontend] Render - posts:', posts.length, 'filteredPosts:', filteredPosts.length, 'loading:', loading);
+
   return (
     <div className="min-h-screen bg-black relative">
       <Header posts={posts} onSearch={handleSearch} />
@@ -153,6 +179,7 @@ export default function Home() {
         {filteredPosts.length === 0 ? (
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
             <p className="text-[#E5E5E5]/60 text-lg">No posts found.</p>
+            <p className="text-[#E5E5E5]/40 text-sm mt-2">Posts: {posts.length}, Filtered: {filteredPosts.length}, Loading: {loading ? 'Yes' : 'No'}</p>
           </div>
         ) : (
           <>
