@@ -77,7 +77,13 @@ export async function GET(request: NextRequest) {
     console.log('[API Route] Final response data:', {
       postsCount: responseData.posts.length,
       total: responseData.meta.pagination.total,
+      hasPostsKey: 'posts' in responseData,
+      responseDataKeys: Object.keys(responseData),
     });
+    
+    // Serialize to verify structure before sending
+    const serialized = JSON.stringify(responseData);
+    console.log('[API Route] Serialized response (first 500 chars):', serialized.substring(0, 500));
     
     const response = NextResponse.json(responseData);
     
@@ -86,7 +92,7 @@ export async function GET(request: NextRequest) {
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
     
-    console.log('[API Route] Returning response with', result.posts?.length || 0, 'posts');
+    console.log('[API Route] Returning response with', responseData.posts.length, 'posts');
     return response;
   } catch (error) {
     console.error('[API Route] Error in posts API route:', error);
