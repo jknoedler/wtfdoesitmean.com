@@ -255,16 +255,32 @@ export async function getAllPosts(): Promise<Post[]> {
         fields: ['id', 'title', 'slug', 'html', 'excerpt', 'published_at', 'updated_at', 'meta_title', 'meta_description'],
       });
 
-      allPosts.push(...(result.posts as Post[]));
+      // Handle different response structures (same as getPosts)
+      const typedResult = result as any;
+      let posts: Post[] = [];
 
-      if (result.meta.pagination.next) {
-        page = result.meta.pagination.next;
+      if (typedResult.posts && Array.isArray(typedResult.posts)) {
+        posts = typedResult.posts;
+      } else if (typedResult['0']) {
+        // Handle numbered properties
+        const keys = Object.keys(typedResult).filter(key => /^\d+$/.test(key)).sort((a, b) => parseInt(a) - parseInt(b));
+        posts = keys.map(key => typedResult[key] as Post);
+      } else if (Array.isArray(typedResult)) {
+        posts = typedResult as Post[];
+      }
+
+      if (posts.length > 0) {
+        allPosts.push(...posts);
+      }
+
+      if (typedResult.meta?.pagination?.next) {
+        page = typedResult.meta.pagination.next;
       } else {
         hasMore = false;
       }
     }
 
-    return allPosts;
+    return allPosts.length > 0 ? allPosts : getMockPosts();
   } catch (error) {
     console.error('Error fetching all posts from Ghost:', error);
     return getMockPosts();
