@@ -180,33 +180,33 @@ export async function getPosts(page: number = 1, limit: number = 15): Promise<{ 
       console.error('[Ghost API] Result value:', JSON.stringify(typedResult).substring(0, 1000));
     }
 
-    if (posts.length > 0) {
-      console.log('[Ghost API] Successfully fetched', posts.length, 'posts. Total:', meta?.pagination?.total || 0);
-
-      const returnValue = {
-        posts: posts as Post[],
-        meta: {
-          pagination: {
-            page: meta?.pagination?.page || page,
-            limit: meta?.pagination?.limit || limit,
-            pages: meta?.pagination?.pages || 1,
-            total: meta?.pagination?.total || posts.length,
-            next: meta?.pagination?.next || null,
-            prev: meta?.pagination?.prev || null,
-          },
+    // Always return posts array, even if empty
+    const returnValue = {
+      posts: (posts.length > 0 ? posts : []) as Post[],
+      meta: {
+        pagination: {
+          page: meta?.pagination?.page || page,
+          limit: meta?.pagination?.limit || limit,
+          pages: meta?.pagination?.pages || 1,
+          total: meta?.pagination?.total || posts.length,
+          next: meta?.pagination?.next || null,
+          prev: meta?.pagination?.prev || null,
         },
-      };
+      },
+    };
 
-      console.log('[Ghost API] Returning:', { postsCount: returnValue.posts.length, total: returnValue.meta.pagination.total });
-      return returnValue;
+    if (posts.length > 0) {
+      console.log('[Ghost API] Successfully fetched', posts.length, 'posts. Total:', returnValue.meta.pagination.total);
+    } else {
+      console.warn('[Ghost API] WARNING: No posts extracted from response!');
+      console.warn('[Ghost API] Result keys:', Object.keys(typedResult || {}));
+      console.warn('[Ghost API] Result type:', typeof typedResult);
+      console.warn('[Ghost API] Result is array:', Array.isArray(typedResult));
+      console.warn('[Ghost API] Returning empty posts array with meta:', returnValue.meta);
     }
 
-    // If no posts property found, the API call might have returned data in a different structure
-    console.error('[Ghost API] ERROR: No posts found in response!');
-    console.error('[Ghost API] Result keys:', Object.keys(typedResult || {}));
-    console.error('[Ghost API] Result type:', typeof typedResult);
-    console.error('[Ghost API] Result is array:', Array.isArray(typedResult));
-    throw new Error('Invalid Ghost API response: missing posts property');
+    console.log('[Ghost API] Returning:', { postsCount: returnValue.posts.length, total: returnValue.meta.pagination.total });
+    return returnValue;
   } catch (error) {
     console.error('[Ghost API] Error fetching posts:', error);
     if (error instanceof Error) {
