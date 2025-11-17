@@ -49,7 +49,12 @@ export default function Home() {
   const fetchPosts = useCallback(async (pageNum: number) => {
     try {
       setIsLoadingMore(true);
-      const response = await fetch(`/api/posts?page=${pageNum}&limit=15`);
+      const response = await fetch(`/api/posts?page=${pageNum}&limit=15`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+      });
       const data = await response.json();
       
       if (data.posts && data.posts.length > 0) {
