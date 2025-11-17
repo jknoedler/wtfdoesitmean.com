@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPosts } from '@/lib/ghost';
+import { getPosts, Post } from '@/lib/ghost';
 
 // Disable caching for this route so new posts show up immediately
 export const dynamic = 'force-dynamic';
