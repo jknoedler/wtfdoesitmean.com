@@ -584,13 +584,13 @@ export default function Layout({ children, currentPageName }) {
         setLoginPassword("");
         setLoginError("");
 
-        // Always reload user data to ensure currentUser is set
-        await loadCounts();
+        // Force a full page reload to ensure auth state is properly recognized
+        window.location.reload();
 
         // Check if user is using default password "password"
         if (loginPassword === 'password') {
           // Redirect to change password page
-          navigate(createPageUrl("ChangePassword"));
+          setTimeout(() => navigate(createPageUrl("ChangePassword")), 100);
         }
         // Stay on current page, but wait for the authentication check to avoid redirects
       } else {
