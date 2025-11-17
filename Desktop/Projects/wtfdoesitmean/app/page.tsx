@@ -57,16 +57,23 @@ export default function Home() {
       });
       const data = await response.json();
       
+      console.log('[Frontend] Fetched posts:', {
+        postsCount: data.posts?.length || 0,
+        total: data.meta?.pagination?.total || 0,
+        posts: data.posts,
+      });
+      
       if (data.posts && data.posts.length > 0) {
         setPosts((prev) => [...prev, ...data.posts]);
         setFilteredPosts((prev) => [...prev, ...data.posts]);
         setHasMore(data.meta.pagination.next !== null);
         setPage(pageNum);
       } else {
+        console.log('[Frontend] No posts in response or empty array');
         setHasMore(false);
       }
     } catch (error) {
-      console.error('Error fetching posts:', error);
+      console.error('[Frontend] Error fetching posts:', error);
       setHasMore(false);
     } finally {
       setIsLoadingMore(false);
