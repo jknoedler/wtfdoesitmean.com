@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Ensure the response always has the correct structure
-    const responseData = {
+    const responseData: any = {
       posts: Array.isArray(result.posts) ? result.posts : [],
       meta: result.meta || {
         pagination: {
@@ -52,6 +52,19 @@ export async function GET(request: NextRequest) {
         },
       },
     };
+    
+    // Add debug info if posts are missing (only in development/debugging)
+    if (responseData.posts.length === 0 && result.meta?.pagination?.total > 0) {
+      responseData._debug = {
+        message: 'Posts array is empty but total > 0',
+        resultStructure: {
+          hasPosts: !!result.posts,
+          postsType: typeof result.posts,
+          postsIsArray: Array.isArray(result.posts),
+          resultKeys: Object.keys(result),
+        },
+      };
+    }
     
     console.log('[API Route] Final response data:', {
       postsCount: responseData.posts.length,
