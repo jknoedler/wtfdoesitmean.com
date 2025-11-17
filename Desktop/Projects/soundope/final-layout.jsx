@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Input } from "@/components/ui/input";
 import { api } from "@/api/apiClient";
-import { Home, Upload, User, TrendingUp, Bell, Mail, Unlock, X, Music, Loader2 } from "lucide-react";
+import { Home, Upload, User, TrendingUp, Bell, Mail, Unlock, X, Music, Loader2, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 import CookieBanner from "@/components/CookieBanner";
@@ -231,6 +231,18 @@ export default function Layout({ children, currentPageName }) {
               </Link>
 
               <Link
+                to={createPageUrl("Leaderboard")}
+                className={`flex flex-col items-center gap-1 smooth-transition px-2 sm:px-4 py-2 rounded-2xl min-w-[56px] sm:min-w-[64px] ${
+                  isActive(createPageUrl("Leaderboard")) ? 'neuro-pressed text-glow' : 'neuro-flat'
+                }`}
+              >
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 smooth-transition text-[#707070]" />
+                <span className="text-[9px] sm:text-[10px] font-medium tracking-wide smooth-transition text-[#606060]">
+                  Leaderboard
+                </span>
+              </Link>
+
+              <Link
                 to={createPageUrl("Profile")}
                 className={`flex flex-col items-center gap-1 smooth-transition px-2 sm:px-4 py-2 rounded-2xl min-w-[56px] sm:min-w-[64px] ${
                   isActive(createPageUrl("Profile")) ? 'neuro-pressed text-glow' : 'neuro-flat'
@@ -239,6 +251,30 @@ export default function Layout({ children, currentPageName }) {
                 <User className="w-5 h-5 sm:w-6 sm:h-6 smooth-transition text-[#707070]" />
                 <span className="text-[9px] sm:text-[10px] font-medium tracking-wide smooth-transition text-[#606060]">
                   Profile
+                </span>
+              </Link>
+
+              <Link
+                to={createPageUrl("SpotifyPlaylists")}
+                className={`flex flex-col items-center gap-1 smooth-transition px-2 sm:px-4 py-2 rounded-2xl min-w-[56px] sm:min-w-[64px] ${
+                  isActive(createPageUrl("SpotifyPlaylists")) ? 'neuro-pressed text-glow' : 'neuro-flat'
+                }`}
+              >
+                <Music className="w-5 h-5 sm:w-6 sm:h-6 smooth-transition text-[#707070]" />
+                <span className="text-[9px] sm:text-[10px] font-medium tracking-wide smooth-transition text-[#606060]">
+                  Submit
+                </span>
+              </Link>
+
+              <Link
+                to={createPageUrl("FreshDopeSounds")}
+                className={`flex flex-col items-center gap-1 smooth-transition px-2 sm:px-4 py-2 rounded-2xl min-w-[56px] sm:min-w-[64px] ${
+                  isActive(createPageUrl("FreshDopeSounds")) ? 'neuro-pressed text-glow' : 'neuro-flat'
+                }`}
+              >
+                <Zap className="w-5 h-5 sm:w-6 sm:h-6 smooth-transition text-[#707070]" />
+                <span className="text-[9px] sm:text-[10px] font-medium tracking-wide smooth-transition text-[#606060]">
+                  Fresh
                 </span>
               </Link>
             </div>
