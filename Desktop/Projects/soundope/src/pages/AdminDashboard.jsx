@@ -27,8 +27,11 @@ export default function AdminDashboard() {
   const queryClient = useQueryClient();
   const [currentUser, setCurrentUser] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("all");
-  const [activeTab, setActiveTab] = useState("playlists"); // 'playlists', 'reports', 'claims', 'export'
+  const [activeTab, setActiveTab] = useState("playlists"); // 'playlists', 'reports', 'claims', 'export', 'roles'
   const [selectedTab, setSelectedTab] = useState("reports");
+  const [roleSearchQuery, setRoleSearchQuery] = useState("");
+  const [roleUsers, setRoleUsers] = useState([]);
+  const [isLoadingRoles, setIsLoadingRoles] = useState(false);
   const [users, setUsers] = useState([]);
   const [userData, setUserData] = useState({});
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
@@ -44,8 +47,8 @@ export default function AdminDashboard() {
       const user = await api.auth.me();
       setCurrentUser(user);
       
-      // Check if user is admin
-      if (user.role !== 'admin') {
+      // Check if user is admin or founder
+      if (user.role !== 'admin' && user.role !== 'founder') {
         navigate(createPageUrl("Discover"));
       }
     } catch (error) {
