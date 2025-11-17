@@ -107,7 +107,25 @@ export async function GET(request: NextRequest) {
     const serialized = JSON.stringify(responseData);
     console.log('[API Route] Serialized response (first 500 chars):', serialized.substring(0, 500));
     
-    const response = NextResponse.json(responseData);
+    // Final safety check - ensure posts exists in serialized JSON
+    if (!serialized.includes('"posts"')) {
+      console.error('[API Route] CRITICAL: posts missing from serialized JSON!', serialized);
+      // Force add posts to the object
+      responseData.posts = responseData.posts || [];
+    }
+    
+    // Create response with explicit structure
+    const finalResponse = {
+      posts: responseData.posts || [],
+      meta: responseData.meta,
+      ...(responseData._debug ? { _debug: responseData._debug } : {}),
+    };
+    
+    console.log('[API Route] Final response object keys:', Object.keys(finalResponse));
+    console.log('[API Route] Final response has posts:', 'posts' in finalResponse);
+    console.log('[API Route] Final response posts length:', finalResponse.posts.length);
+    
+    const response = NextResponse.json(finalResponse);
     
     // Add headers to prevent caching
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
