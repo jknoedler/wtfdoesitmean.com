@@ -90,13 +90,14 @@ export async function getPosts(page: number = 1, limit: number = 15): Promise<{ 
   
   // Use mock data if Ghost is not configured
   if (!ghostApi) {
+    console.log('[Ghost API] No API instance, using mock data');
     const mockPosts = getMockPosts();
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
     const paginatedPosts = mockPosts.slice(startIndex, endIndex);
     const totalPages = Math.ceil(mockPosts.length / limit);
     
-    return {
+    const result = {
       posts: paginatedPosts,
       meta: {
         pagination: {
@@ -109,6 +110,8 @@ export async function getPosts(page: number = 1, limit: number = 15): Promise<{ 
         },
       },
     };
+    console.log('[Ghost API] Returning mock data:', { postsCount: result.posts.length, total: result.meta.pagination.total });
+    return result;
   }
 
   try {
@@ -142,8 +145,8 @@ export async function getPosts(page: number = 1, limit: number = 15): Promise<{ 
 
     console.log('[Ghost API] Successfully fetched', result.posts.length, 'posts. Total:', result.meta?.pagination?.total || 0);
     
-    return {
-      posts: result.posts as Post[],
+    const returnValue = {
+      posts: Array.isArray(result.posts) ? (result.posts as Post[]) : [],
       meta: {
         pagination: {
           page: result.meta?.pagination?.page || page,
@@ -155,6 +158,9 @@ export async function getPosts(page: number = 1, limit: number = 15): Promise<{ 
         },
       },
     };
+    
+    console.log('[Ghost API] Returning:', { postsCount: returnValue.posts.length, total: returnValue.meta.pagination.total });
+    return returnValue;
   } catch (error) {
     console.error('[Ghost API] Error fetching posts:', error);
     if (error instanceof Error) {
@@ -162,9 +168,9 @@ export async function getPosts(page: number = 1, limit: number = 15): Promise<{ 
       console.error('[Ghost API] Error stack:', error.stack);
     }
     // Fallback to mock data on error
-    console.log('[Ghost API] Falling back to mock data');
+    console.log('[Ghost API] Falling back to mock data due to error');
     const mockPosts = getMockPosts();
-    return {
+    const fallbackResult = {
       posts: mockPosts,
       meta: {
         pagination: {
@@ -177,6 +183,8 @@ export async function getPosts(page: number = 1, limit: number = 15): Promise<{ 
         },
       },
     };
+    console.log('[Ghost API] Returning fallback mock data:', { postsCount: fallbackResult.posts.length });
+    return fallbackResult;
   }
 }
 
