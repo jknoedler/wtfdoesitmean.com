@@ -1489,7 +1489,7 @@ export default function Layout({ children, currentPageName }) {
         {location.pathname !== createPageUrl("Login") &&
          location.pathname !== "/Login" &&
          location.pathname !== "/login" && (
-          <nav className="fixed bottom-0 left-0 right-0 h-20 neuro-base z-[250] border-t border-[#1f1f1f] safe-area-inset-bottom">
+          <nav className="fixed bottom-0 left-0 right-0 h-20 neuro-base z-[500] border-t border-[#1f1f1f] bg-[#141414]/98 backdrop-blur-sm safe-area-inset-bottom" style={{ boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.8)' }}>
             <div className="h-full max-w-screen-xl mx-auto px-2 sm:px-6 flex items-center justify-around">
               <Link
                 to={createPageUrl("Dashboard")}
@@ -1561,13 +1561,13 @@ export default function Layout({ children, currentPageName }) {
                   isActive(createPageUrl("SpotifyPlaylists")) ? 'neuro-pressed text-glow' : 'neuro-flat'
                 } px-2 sm:px-4 py-2 rounded-2xl min-w-[56px] sm:min-w-[64px]`}
               >
-                <Music className={`w-5 h-5 sm:w-6 sm:h-6 smooth-transition ${
+                <Upload className={`w-5 h-5 sm:w-6 sm:h-6 smooth-transition ${
                   isActive(createPageUrl("SpotifyPlaylists")) ? 'text-[#a0a0a0]' : 'text-[#707070]'
                 }`} />
                 <span className={`text-[9px] sm:text-[10px] font-medium tracking-wide smooth-transition ${
                   isActive(createPageUrl("SpotifyPlaylists")) ? 'text-[#a0a0a0]' : 'text-[#606060]'
                 }`}>
-                  Playlists
+                  Submit
                 </span>
               </Link>
               
